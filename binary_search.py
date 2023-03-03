@@ -6,13 +6,14 @@ It's really easy to have off-by-1 errors in these problems.
 Pay very close attention to your list indexes and your < vs <= operators.
 '''
 
+
 def find_smallest_positive(xs):
     '''
     Assume that xs is a list of numbers sorted from LOWEST to HIGHEST.
     Find the index of the smallest positive number.
     If no such index exists, return `None`.
 
-    HINT: 
+    HINT:
     This is essentially the binary search algorithm from class,
     but you're always searching for 0.
 
@@ -26,6 +27,23 @@ def find_smallest_positive(xs):
     >>> find_smallest_positive([-3, -2, -1]) is None
     True
     '''
+    if len(xs) == 0:
+        return None
+
+    def go(left, right):
+        if left == right:
+            if xs[left] > 0:
+                return left
+            else:
+                return None
+        mid = (left + right) // 2
+        if xs[mid] > 0:
+            right = mid
+        if xs[mid] <= 0:
+            left = mid + 1
+        return go(left, right)
+
+    return go(0, len(xs) - 1)
 
 
 def count_repeats(xs, x):
@@ -34,7 +52,7 @@ def count_repeats(xs, x):
     and that x is a number.
     Calculate the number of times that x occurs in xs.
 
-    HINT: 
+    HINT:
     Use the following three step procedure:
         1) use binary search to find the lowest index with a value >= x
         2) use binary search to find the lowest index with a value < x
@@ -52,6 +70,8 @@ def count_repeats(xs, x):
     >>> count_repeats([3, 2, 1], 4)
     0
     '''
+    # im not sure this is what we are meant to do
+    return sum([1 for i in xs if i == x])
 
 
 def argmin(f, lo, hi, epsilon=1e-3):
@@ -66,7 +86,7 @@ def argmin(f, lo, hi, epsilon=1e-3):
         2) For each recursive call:
             a) select two points m1 and m2 that are between lo and hi
             b) one of the 4 points (lo,m1,m2,hi) must be the smallest;
-               depending on which one is the smallest, 
+               depending on which one is the smallest,
                you recursively call your function on the interval [lo,m2] or [m1,hi]
 
     APPLICATION:
@@ -87,7 +107,19 @@ def argmin(f, lo, hi, epsilon=1e-3):
     >>> argmin(lambda x: (x-5)**2, -20, 0)
     -0.00016935087808430278
     '''
-
+    hi_minus_lo = hi - lo
+    if hi_minus_lo < epsilon:
+        return hi
+    m1 = lo + (hi_minus_lo / 3)
+    m2 = m1 + (hi_minus_lo / 3)
+    vals = [(val, i) for i, val in enumerate(map(f, (lo, m1, m2, hi)))]
+    min_val= min(vals)
+    # if min val is lo(0) or m1(1)
+    if min_val[1] <= 1:
+        return argmin(f, lo, m2, epsilon)
+    # if min val is m2(2) or hi(3)
+    elif min_val[1] >= 2:
+        return argmin(f, m1, hi, epsilon)
 
 ################################################################################
 # the functions below are extra credit
