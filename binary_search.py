@@ -50,15 +50,6 @@ def find_first_eq_x(xs, x):
     '''
     Assume sorted HIGHEST to LOWEST
     use binary search to find the lowest index with a value == x
-    i 0 1 2 3 4 5 6
-    x 5 4 3 2 2 2 1
-           >=x    <x
-    step:   1     2
-
-    i 0 1 2 3 4
-    x 2 2 2 1 1
-     >=x    <x
-    s 1     2
     >>> find_first_eq_x([7, 6, 4, 3, 2, 2, 2, 1, 0], 2)
     4
     >>> find_first_eq_x([7, 7, 7, 5, 3], 7)
@@ -98,7 +89,6 @@ def find_first_lt_x(xs, x):
     3
     >>> find_first_lt_x([7, 6, 4, 3, 2, 2, 2, 1], 1)
     8
-
     '''
     if len(xs) == 0:
         return None
@@ -143,13 +133,6 @@ def count_repeats(xs, x):
     >>> count_repeats([3, 2, 1], 4)
     0
     '''
-    '''
-    i 0 1 2 3 4 5 6
-    x 5 4 3 2 2 2 1
-           >=x    <x
-    step:   1     2
-    '''
-    # STEP 1 SHOULD SAY == not >=
     first_eq = find_first_eq_x(xs, x)
     first_lt = find_first_lt_x(xs, x)
     if first_eq is None:
