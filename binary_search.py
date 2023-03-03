@@ -46,6 +46,79 @@ def find_smallest_positive(xs):
     return go(0, len(xs) - 1)
 
 
+def find_first_eq_x(xs, x):
+    '''
+    Assume sorted HIGHEST to LOWEST
+    use binary search to find the lowest index with a value == x
+    i 0 1 2 3 4 5 6
+    x 5 4 3 2 2 2 1
+           >=x    <x
+    step:   1     2
+
+    i 0 1 2 3 4
+    x 2 2 2 1 1
+     >=x    <x
+    s 1     2
+    >>> find_first_eq_x([7, 6, 4, 3, 2, 2, 2, 1, 0], 2)
+    4
+    >>> find_first_eq_x([7, 7, 7, 5, 3], 7)
+    0
+    >>> find_first_eq_x([7, 6, 4, 3, 2, 2, 2, 1], 1)
+    7
+    >>> find_first_eq_x([3, 2, 1], 4) is None
+    True
+    '''
+    if len(xs) == 0:
+        return None
+
+    def go(left, right):
+        if left == right:
+            if xs[left] == x:
+                return left
+            else:
+                return None
+        mid = (left + right) // 2
+        if xs[mid] > x:
+            left = mid + 1
+        if xs[mid] <= x:
+            right = mid
+        return go(left, right)
+
+    return go(0, len(xs) - 1)
+
+
+def find_first_lt_x(xs, x):
+    '''
+    use binary search to find the lowest index with a value < x
+    Assume sorted HIGHEST to LOWEST
+    Returns len(xs) if no values less than x
+    >>> find_first_lt_x([7, 6, 4, 3, 2, 2, 2, 1, 0], 2)
+    7
+    >>> find_first_lt_x([7, 7, 7, 5, 3], 7)
+    3
+    >>> find_first_lt_x([7, 6, 4, 3, 2, 2, 2, 1], 1)
+    8
+
+    '''
+    if len(xs) == 0:
+        return None
+
+    def go(left, right):
+        if left == right:
+            if xs[left] < x:
+                return left
+            else:
+                return len(xs)
+        mid = (left + right) // 2
+        if xs[mid] >= x:
+            left = mid + 1
+        if xs[mid] < x:
+            right = mid
+        return go(left, right)
+
+    return go(0, len(xs) - 1)
+
+
 def count_repeats(xs, x):
     '''
     Assume that xs is a list of numbers sorted from HIGHEST to LOWEST,
@@ -70,8 +143,18 @@ def count_repeats(xs, x):
     >>> count_repeats([3, 2, 1], 4)
     0
     '''
-    # im not sure this is what we are meant to do
-    return sum([1 for i in xs if i == x])
+    '''
+    i 0 1 2 3 4 5 6
+    x 5 4 3 2 2 2 1
+           >=x    <x
+    step:   1     2
+    '''
+    # STEP 1 SHOULD SAY == not >=
+    first_eq = find_first_eq_x(xs, x)
+    first_lt = find_first_lt_x(xs, x)
+    if first_eq is None:
+        return 0
+    return first_lt - first_eq
 
 
 def argmin(f, lo, hi, epsilon=1e-3):
@@ -113,7 +196,7 @@ def argmin(f, lo, hi, epsilon=1e-3):
     m1 = lo + (hi_minus_lo / 3)
     m2 = m1 + (hi_minus_lo / 3)
     vals = [(val, i) for i, val in enumerate(map(f, (lo, m1, m2, hi)))]
-    min_val= min(vals)
+    min_val = min(vals)
     # if min val is lo(0) or m1(1)
     if min_val[1] <= 1:
         return argmin(f, lo, m2, epsilon)
@@ -124,6 +207,7 @@ def argmin(f, lo, hi, epsilon=1e-3):
 ################################################################################
 # the functions below are extra credit
 ################################################################################
+
 
 def find_boundaries(f):
     '''
